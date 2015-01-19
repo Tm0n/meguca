@@ -28,11 +28,7 @@ exports.dbCache = {
 
 var HOT = exports.hot = {};
 var RES = exports.resources = {};
-var clientConfig = _.pick(config,'IP_MNEMONIC', 'USE_WEBSOCKETS', 'READ_ONLY');
-var clientImagerConfig = _.pick(imager,'WEBM', 'UPLOAD_URL','MEDIA_URL', 'THUMB_DIMENSIONS',
-		'PINKY_DIMENSIONS', 'SPOILER_IMAGES', 'IMAGE_HATS');
-var clientReportConfig = _.pick(report, 'RECAPTCHA_PUBLIC_KEY');
-exports.clientHotConfig = {};
+exports.clientClientConfig = {};
 exports.clientConfigHash = '';
 exports.clients = {};
 exports.clientsByIP = {};
@@ -56,19 +52,29 @@ function reload_hot_config(cb) {
 			delete HOT[k];
 		});
 		_.extend(HOT, hot.hot);
-		// Pass some of the config variables to the client
-		var clientHotConfig = exports.clientHotConfig = _.pick(HOT, 'RADIO_BANNER', 'ILLYA_DANCE',
-				'EIGHT_BALL', 'THREADS_PER_PAGE', 'ABBREVIATED_REPLIES', 'SUBJECT_MAX_LENGTH', 'EXCLUDE_REGEXP',
-				'ADMIN_ALIAS', 'MOD_ALIAS', 'SAGE_ENABLED');
+		pickClientConfigs();
+		/*// Pass some of the config variables to the client
+		var cc = 
 		HOT.CLIENT_CONFIG = JSON.stringify(clientConfig);
 		HOT.CLIENT_IMAGER_CONFIG = JSON.stringify(clientImagerConfig);
 		HOT.CLIENT_HOT_CONFIG = JSON.stringify(clientHotConfig);
+		HOT.CLIENT_REPORT_CONFIG = JSON.stringify(clientReportConfig);
 		exports.clientConfigHash = HOT.CLIENT_HOT_HASH = crypto.createHash('MD5')
-				.update(HOT.CLIENT_CONFIG + HOT.CLIENT_IMAGER_CONFIG + HOT.CLIENT_HOT_CONFIG).digest('hex');
+				.update(HOT.CLIENT_CONFIG + HOT.CLIENT_IMAGER_CONFIG + HOT.CLIENT_HOT_CONFIG).digest('hex');*/
 		read_exits('exits.txt', function () {
 			hooks.trigger('reloadHot', HOT, cb);
 		});
 	});
+}
+
+function pickClientConfigs(){
+	var c = _.pick(config,'IP_MNEMONIC', 'USE_WEBSOCKETS', 'READ_ONLY');
+	var i = _.pick(imager,'WEBM', 'UPLOAD_URL','MEDIA_URL', 'THUMB_DIMENSIONS','PINKY_DIMENSIONS',
+			'SPOILER_IMAGES', 'IMAGE_HATS');
+	var r = _.pick(report, 'RECAPTCHA_PUBLIC_KEY');
+	var h = _.pick(HOT, 'RADIO_BANNER', 'ILLYA_DANCE', 'EIGHT_BALL','THREADS_PER_PAGE', 'ABBREVIATED_REPLIES',
+			'SUBJECT_MAX_LENGTH', 'EXCLUDE_REGEXP','ADMIN_ALIAS', 'MOD_ALIAS', 'SAGE_ENABLED');
+	console.log(c);
 }
 
 function reload_scripts(cb) {
