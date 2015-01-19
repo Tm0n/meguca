@@ -17,11 +17,13 @@ $META	<!--[if lt IE 9]><script src="{{MEDIA_URL}}js/ie.js"></script><![endif]-->
 	<script src="{{MEDIA_URL}}js/oninput-1.1.min.js"></script>
 	<script src="{{MEDIA_URL}}js/jquery.cookie-1.4.1.min.js"></script>
 	<script>
-		var HOT = {{CLIENT_HOT}};
-		var HOT_HASH = '{{CLIENT_HOT_HASH}}';
+		var config = {{CLIENT_CONFIG}};
+		var imagerConfig = {{CLIENT_IMAGER_CONFIG}};
+		var hotConfig = {{CLIENT_HOT_CONFIG}};
+		var configHash = '{{CLIENT_CONFIG_HASH}}';
 		// Bootstrap options model, so that it is available on model extraction
 		_.defaults(options, {
-			lastn: HOT.THREAD_LAST_N,
+			lastn: hotConfig.THREAD_LAST_N,
 			inlinefit: 'width',
 		});
 		options = new Backbone.Model(options);

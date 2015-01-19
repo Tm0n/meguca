@@ -7,6 +7,7 @@ var _ = require('underscore'),
     imager = require('../imager/config'),
     path = require('path'),
     pipeline = require('../pipeline'),
+    report = require('../report/config'),
     vm = require('vm');
 
 _.templateSettings = {
@@ -27,8 +28,12 @@ exports.dbCache = {
 
 var HOT = exports.hot = {};
 var RES = exports.resources = {};
-exports.clientHot = {};
-exports.clientHotHash = '';
+var clientConfig = _.pick(config,'IP_MNEMONIC', 'USE_WEBSOCKETS', 'READ_ONLY');
+var clientImagerConfig = _.pick(imager,'WEBM', 'UPLOAD_URL','MEDIA_URL', 'THUMB_DIMENSIONS',
+		'PINKY_DIMENSIONS', 'SPOILER_IMAGES', 'IMAGE_HATS');
+var clientReportConfig = _.pick(report, 'RECAPTCHA_PUBLIC_KEY');
+exports.clientHotConfig = {};
+exports.clientConfigHash = '';
 exports.clients = {};
 exports.clientsByIP = {};
 
@@ -51,22 +56,15 @@ function reload_hot_config(cb) {
 			delete HOT[k];
 		});
 		_.extend(HOT, hot.hot);
-		// Pass some of the hot variables to the client
-		var clientHot = exports.clientHot = {
-			RADIO_BANNER: HOT.RADIO_BANNER,
-			ILLYA_DANCE: HOT.ILLYA_DANCE,
-			EIGHT_BALL: HOT.EIGHT_BALL,
-			THREADS_PER_PAGE: HOT.THREADS_PER_PAGE,
-			THREADS_PER_PAGE: HOT.THREADS_PER_PAGE,
-			ABBREVIATED_REPLIES: HOT.ABBREVIATED_REPLIES,
-			SUBJECT_MAX_LENGTH: HOT.SUBJECT_MAX_LENGTH,
-			EXCLUDE_REGEXP: HOT.EXCLUDE_REGEXP,
-			ADMIN_ALIAS: HOT.ADMIN_ALIAS,
-			MOD_ALIAS: HOT.MOD_ALIAS,
-			SAGE_ENABLED: HOT.SAGE_ENABLED,
-		};
-		HOT.CLIENT_HOT = JSON.stringify(clientHot);
-		exports.clientHotHash = HOT.CLIENT_HOT_HASH = crypto.createHash('MD5').update(HOT.CLIENT_HOT).digest('hex');
+		// Pass some of the config variables to the client
+		var clientHotConfig = exports.clientHotConfig = _.pick(HOT, 'RADIO_BANNER', 'ILLYA_DANCE',
+				'EIGHT_BALL', 'THREADS_PER_PAGE', 'ABBREVIATED_REPLIES', 'SUBJECT_MAX_LENGTH', 'EXCLUDE_REGEXP',
+				'ADMIN_ALIAS', 'MOD_ALIAS', 'SAGE_ENABLED');
+		HOT.CLIENT_CONFIG = JSON.stringify(clientConfig);
+		HOT.CLIENT_IMAGER_CONFIG = JSON.stringify(clientImagerConfig);
+		HOT.CLIENT_HOT_CONFIG = JSON.stringify(clientHotConfig);
+		exports.clientConfigHash = HOT.CLIENT_HOT_HASH = crypto.createHash('MD5')
+				.update(HOT.CLIENT_CONFIG + HOT.CLIENT_IMAGER_CONFIG + HOT.CLIENT_HOT_CONFIG).digest('hex');
 		read_exits('exits.txt', function () {
 			hooks.trigger('reloadHot', HOT, cb);
 		});

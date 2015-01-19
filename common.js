@@ -1,5 +1,5 @@
 var config = require('./config');
-var HOT = require('./server/state').hot;
+var hotConfig = require('./server/state').hot;
 var imagerConfig = require('./imager/config');
 var DEFINES = exports;
 DEFINES.INVALID = 0;
@@ -187,7 +187,7 @@ function is_noko(email) {
 }
 exports.is_noko = is_noko;
 function is_sage(email) {
-	return HOT.SAGE_ENABLED && email &&
+	return hotConfig.SAGE_ENABLED && email &&
 			email.indexOf('@') == -1 && /sage/i.test(email);
 }
 exports.is_sage = is_sage;
@@ -351,7 +351,7 @@ function parse_dice(frag) {
 	if (frag == '#flip')
 		return {n: 1, faces: 2};
     if (frag == '#8ball')
-        return {n: 1, faces: HOT.EIGHT_BALL.length};
+        return {n: 1, faces: hotConfig.EIGHT_BALL.length};
 	// Increment counter
 	if (frag == '#pyu')
 		return {pyu: 'increment'};
@@ -389,7 +389,7 @@ function readable_dice(bit, d) {
 	if (bit == '#flip')
 		return '#flip (' + (d[1] == 2) + ')';
     if (bit == '#8ball')
-        return '#8ball (' + HOT.EIGHT_BALL[d[1]- 1] + ')';
+        return '#8ball (' + hotConfig.EIGHT_BALL[d[1]- 1] + ')';
 	if (bit == '#pyu')
 		return '#pyu(' + d + ')';
 	if (bit == '#pcount')
@@ -740,7 +740,7 @@ OS.atama = function (data) {
 	if (data.trip)
 		header.push(safe('<code>' + data.trip + '</code>'));
 	if (auth)
-		header.push(' ## ' + (auth == 'Admin' ? HOT.ADMIN_ALIAS : HOT.MOD_ALIAS));
+		header.push(' ## ' + (auth == 'Admin' ? hotConfig.ADMIN_ALIAS : hotConfig.MOD_ALIAS));
 	this.trigger('headerName', {header: header, data: data});
 	header.push(safe('</b>'));
 	if (data.email) {
@@ -857,7 +857,7 @@ exports.parse_name = function (name) {
 		}
 		tripcode = escape_html(tripcode);
 	}
-	name = name.trim().replace(HOT.EXCLUDE_REGEXP, '');
+	name = name.trim().replace(hotConfig.EXCLUDE_REGEXP, '');
 	return [name.substr(0, 100), tripcode.substr(0, 128),
 			secure.substr(0, 128)];
 };

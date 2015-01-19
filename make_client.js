@@ -9,17 +9,11 @@ var async = require('async'),
 function make_client(inputs, out, cb) {
 
 var defines = {};
-for (var k in config)
-	defines[k] = JSON.stringify(config[k]);
-for (var k in imagerConfig)
-	defines[k] = JSON.stringify(imagerConfig[k]);
 for (var k in reportConfig)
 	defines[k] = JSON.stringify(reportConfig[k]);
 
 // UGH
 var configDictLookup = {
-	config: config,
-	imagerConfig: imagerConfig,
 	reportConfig: reportConfig,
 };
 
@@ -46,7 +40,7 @@ fs.readFile(file, 'UTF-8', function (err, fullFile) {
 		var line = lines[j];
 		if (/^var\s+DEFINES\s*=\s*exports\s*;\s*$/.test(line))
 			continue;
-		if (/^var\s+(\w+onfig|common|_|HOT)\s*=\s*require.*$/.test(line))
+		if (/^var\s+(\w+onfig|common|_)\s*=\s*require.*$/.test(line))
 			continue;
 		m = line.match(/^DEFINES\.(\w+)\s*=\s*(.+);$/);
 		if (m) {

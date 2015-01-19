@@ -73,7 +73,7 @@ function shift_replies(section) {
 		return;
 	var shown = section.children('article[id]:not(:has(form))');
 	var rem = shown.length;
-	if (rem < HOT.ABBREVIATED_REPLIES)
+	if (rem < hotConfig.ABBREVIATED_REPLIES)
 		return;
 	var $stat, omit = 0, img = 0;
 	var info = section_abbrev(section);
@@ -89,7 +89,7 @@ function shift_replies(section) {
 	var omitsBefore = omit;
 	for (var i = 0; i < shown.length; i++) {
 		var cull = $(shown[i]);
-		if (rem-- < HOT.ABBREVIATED_REPLIES)
+		if (rem-- < hotConfig.ABBREVIATED_REPLIES)
 			break;
 		if (cull.has('figure').length)
 			img++;
@@ -104,7 +104,7 @@ function spill_page() {
 		return;
 	/* Ugh, this could be smarter. */
 	var ss = $('body > section[id]:visible');
-	for (var i = HOT.THREADS_PER_PAGE; i < ss.length; i++)
+	for (var i = hotConfig.THREADS_PER_PAGE; i < ss.length; i++)
 		$(ss[i]).prev('hr').andSelf().hide();
 
 }
@@ -482,12 +482,14 @@ dispatcher[ONLINE_COUNT] = function(msg){
 
 dispatcher[HOT_INJECTION] = function(msg){
 	// Request new varibles, if hashes don't match
-	if (msg[0] == false && msg[1] != HOT_HASH)
+	if (msg[0] == false && msg[1] != configHash)
 		send([HOT_INJECTION, true]);
 	// Update variables and hash
 	else if (msg[0] == true){
-		HOT = msg[2];
-		HOT_HASH = msg[1];
+		configHash = msg[1];
+		config = msg[2];
+		imagerConfig = msg[3];
+		hotConfig = msg[4];
 	}
 };
 
