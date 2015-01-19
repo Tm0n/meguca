@@ -1053,8 +1053,7 @@ STATE.emitter.on('change:clientsByIP', function(){
 dispatcher[common.HOT_INJECTION] = function(msg, client){
 	if (!check(['boolean'], msg) || msg[0] !== true)
 		return false;
-	client.send([0, common.HOT_INJECTION, true, STATE.clientConfigHash, 
-	             STATE.clientConfig, STATE.clientImagerConfig, STATE.clientHotConfig]);
+	client.send([0, common.HOT_INJECTION, true, STATE.clientConfigHash, STATE.clientConfig]);
 	return true;
 };
 

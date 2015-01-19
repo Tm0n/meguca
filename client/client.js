@@ -487,9 +487,10 @@ dispatcher[HOT_INJECTION] = function(msg){
 	// Update variables and hash
 	else if (msg[0] == true){
 		configHash = msg[1];
-		config = msg[2];
-		imagerConfig = msg[3];
-		hotConfig = msg[4];
+		config = msg[2][0];
+		imagerConfig = msg[2][1];
+		reportConfig = msg[2][2];
+		hotConfig = msg[2][3];
 	}
 };
 

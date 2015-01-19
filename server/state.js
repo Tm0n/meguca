@@ -28,7 +28,7 @@ exports.dbCache = {
 
 var HOT = exports.hot = {};
 var RES = exports.resources = {};
-exports.clientClientConfig = {};
+exports.clientConfig = [];
 exports.clientConfigHash = '';
 exports.clients = {};
 exports.clientsByIP = {};
@@ -68,13 +68,21 @@ function reload_hot_config(cb) {
 }
 
 function pickClientConfigs(){
+	// TODO: Once using gulp, could write this to the start of the client file instead
 	var c = _.pick(config,'IP_MNEMONIC', 'USE_WEBSOCKETS', 'READ_ONLY');
 	var i = _.pick(imager,'WEBM', 'UPLOAD_URL','MEDIA_URL', 'THUMB_DIMENSIONS','PINKY_DIMENSIONS',
 			'SPOILER_IMAGES', 'IMAGE_HATS');
 	var r = _.pick(report, 'RECAPTCHA_PUBLIC_KEY');
 	var h = _.pick(HOT, 'RADIO_BANNER', 'ILLYA_DANCE', 'EIGHT_BALL','THREADS_PER_PAGE', 'ABBREVIATED_REPLIES',
 			'SUBJECT_MAX_LENGTH', 'EXCLUDE_REGEXP','ADMIN_ALIAS', 'MOD_ALIAS', 'SAGE_ENABLED');
-	console.log(c);
+	HOT.CLIENT_CONFIG = c;
+	HOT.CLIENT_IMAGER = i;
+	HOT.CLIENT_REPORT = r;
+	HOT.CLIENT_HOT = h;
+	var combined = [c, i, r, h];
+	exports.clientConfig = combined;
+	exports.clientConfigHash = HOT.CLIENT_CONFIG_HASH = crypto.createHash('MD5')
+			.update(JSON.stringify(combined)).digest('hex');
 }
 
 function reload_scripts(cb) {
@@ -204,7 +212,7 @@ exports.reload_hot_resources = function (cb) {
 
 	async.series([
 		reload_hot_config,
-		pipeline.rebuild,
+		//pipeline.rebuild,
 		reload_scripts,
 		reload_resources,
 	], cb);
